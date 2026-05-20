@@ -25,6 +25,7 @@ chmod +x sync_antigravity_data.sh
 ./sync_antigravity_data.sh
 ```
 
+
 ## Dry Run Preview
 
 ![Dry Run Output](ss/dryrun.png)
