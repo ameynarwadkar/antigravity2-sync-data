@@ -136,6 +136,7 @@ if [ -d "$src_user_dir" ]; then
         if [ -f "$file_path" ]; then
             if [ "$DRY_RUN" = true ]; then
                 echo "[Dry-Run] Would copy file: $file"
+                echo "  -> User/$file"
             else
                 echo "Copying configuration file: $file..."
                 cp "$file_path" "$dst_user_dir/"
@@ -150,6 +151,10 @@ if [ -d "$src_user_dir" ]; then
         if [ -d "$dir_path" ]; then
             if [ "$DRY_RUN" = true ]; then
                 echo "[Dry-Run] Would copy directory: $dir"
+                find "$dir_path" -type f 2>/dev/null | while IFS= read -r f; do
+                    rel_path="${f#$src_user_dir/}"
+                    echo "  -> User/$rel_path"
+                done
             else
                 echo "Copying directory recursively: $dir..."
                 target_dir="$dst_user_dir/$dir"
@@ -165,6 +170,10 @@ if [ -d "$src_user_dir" ]; then
         global_storage_dst="$dst_user_dir/globalStorage"
         if [ "$DRY_RUN" = true ]; then
             echo "[Dry-Run] Would copy globalStorage contents"
+            find "$global_storage_src" -type f 2>/dev/null | while IFS= read -r f; do
+                rel_path="${f#$src_user_dir/}"
+                echo "  -> User/$rel_path"
+            done
         else
             echo "Copying globalStorage contents recursively..."
             mkdir -p "$global_storage_dst"
@@ -181,6 +190,10 @@ if [ -d "$logs_src" ]; then
     logs_dst="$DESTINATION_PATH/logs"
     if [ "$DRY_RUN" = true ]; then
         echo "[Dry-Run] Would copy logs folder contents"
+        find "$logs_src" -type f 2>/dev/null | while IFS= read -r f; do
+            rel_path="${f#$SOURCE_PATH/}"
+            echo "  -> $rel_path"
+        done
     else
         echo "Copying logs recursively..."
         mkdir -p "$logs_dst"

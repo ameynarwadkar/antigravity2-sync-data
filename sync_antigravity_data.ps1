@@ -104,6 +104,7 @@ try {
             if (Test-Path $filePath) {
                 if ($DryRun) {
                     Write-Host "[Dry-Run] Would copy file: $file" -ForegroundColor Yellow
+                    Write-Host "  -> User\$file" -ForegroundColor DarkGray
                 } else {
                     Write-Host "Copying configuration file: $file..." -ForegroundColor Cyan
                     Copy-Item -Path $filePath -Destination $dstUserDir -Force
@@ -118,6 +119,10 @@ try {
             if (Test-Path $dirPath) {
                 if ($DryRun) {
                     Write-Host "[Dry-Run] Would copy directory: $dir" -ForegroundColor Yellow
+                    Get-ChildItem -Path $dirPath -Recurse -File | ForEach-Object {
+                        $relative = $_.FullName.Substring($srcUserDir.Length).TrimStart('\')
+                        Write-Host "  -> User\$relative" -ForegroundColor DarkGray
+                    }
                 } else {
                     Write-Host "Copying directory recursively: $dir..." -ForegroundColor Cyan
                     $targetDir = Join-Path $dstUserDir $dir
@@ -135,6 +140,10 @@ try {
             $globalStorageDst = Join-Path $dstUserDir "globalStorage"
             if ($DryRun) {
                 Write-Host "[Dry-Run] Would copy globalStorage contents" -ForegroundColor Yellow
+                Get-ChildItem -Path $globalStorageSrc -Recurse -File | ForEach-Object {
+                    $relative = $_.FullName.Substring($srcUserDir.Length).TrimStart('\')
+                    Write-Host "  -> User\$relative" -ForegroundColor DarkGray
+                }
             } else {
                 Write-Host "Copying globalStorage contents recursively..." -ForegroundColor Cyan
                 if (-not (Test-Path $globalStorageDst)) {
@@ -153,6 +162,10 @@ try {
         $logsDst = Join-Path $DestinationPath "logs"
         if ($DryRun) {
             Write-Host "[Dry-Run] Would copy logs folder contents" -ForegroundColor Yellow
+            Get-ChildItem -Path $logsSrc -Recurse -File | ForEach-Object {
+                $relative = $_.FullName.Substring($SourcePath.Length).TrimStart('\')
+                Write-Host "  -> $relative" -ForegroundColor DarkGray
+            }
         } else {
             Write-Host "Copying logs recursively..." -ForegroundColor Cyan
             if (-not (Test-Path $logsDst)) {
